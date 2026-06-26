@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise For You</title>
+    <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        body {
+          background-color: #2f3640; 
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .envelope {
+          position: relative;
+          width: 320px;
+          height: 220px;
+          background-color: #ff7675; 
+          border-radius: 0 0 12px 12px;
+          box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+          cursor: pointer;
+          z-index: 1;
+          overflow: hidden; 
+        }
+        .envelope.open {
+          overflow: visible;
+        }
+        .envelope::before {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          border-left: 160px solid transparent;
+          border-right: 160px solid transparent;
+          border-bottom: 110px solid #ff6b6b; 
+          z-index: 4;
+        }
+        .envelope::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          border-left: 160px solid #e84118; 
+          border-top: 110px solid transparent;
+          border-bottom: 110px solid #e84118;
+          opacity: 0.15;
+          z-index: 4;
+          border-radius: 0 0 0 12px;
+        }
+        .envelope-lid-secondary {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          border-right: 160px solid #e84118;
+          border-top: 110px solid transparent;
+          border-bottom: 110px solid #e84118;
+          opacity: 0.15;
+          z-index: 4;
+          border-radius: 0 0 12px 0;
+        }
+        .envelope-lid {
+          position: absolute;
+          top: 0;
+          left: 0;
+          border-left: 160px solid transparent;
+          border-right: 160px solid transparent;
+          border-top: 110px solid #ff7675;
+          transform-origin: top;
+          transition: transform 0.4s ease 0.2s, z-index 0.1s ease 0.2s;
+          z-index: 5;
+        }
+        .heart {
+          position: absolute;
+          width: 24px;
+          height: 24px;
+          background-color: #d63031; 
+          top: -95px; 
+          left: -12px;
+          transform: rotate(-45deg);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+          transition: transform 0.4s ease 0.2s;
+        }
+        .heart::before, .heart::after {
+          content: '';
+          position: absolute;
+          width: 24px;
+          height: 24px;
+          background-color: #d63031;
+          border-radius: 50%;
+        }
+        .heart::before { top: -12px; left: 0; }
+        .heart::after { top: 0; left: 12px; }
+
+        .card-wrapper {
+          position: absolute;
+          bottom: 10px;
+          left: 15px;
+          width: 290px;
+          height: 190px;
+          z-index: 2;
+          transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+          opacity: 0;
+        }
+        .envelope.open .card-wrapper {
+          opacity: 1;
+        }
+        .card {
+          width: 100%;
+          height: 100%;
+          background: #ffffff;
+          border-radius: 4px;
+          padding: 10px;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .card-border {
+          width: 100%;
+          height: 100%;
+          border: 1px solid #d4af37;
+          padding: 15px;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+        .card-cover {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 3;
+          transition: opacity 0.4s ease 0.5s;
+        }
+        .card-title { text-align: center; }
+        .card-title-secondary {
+          display: block;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 3px;
+          color: #999;
+        }
+        .card-title-main {
+          font-size: 26px;
+          font-weight: bold;
+          color: #b33939;
+        }
+        .card-body {
+          font-size: 13px;
+          line-height: 1.5;
+          color: #2c3e50;
+          text-align: center;
+          opacity: 0;
+          transform: scale(0.95);
+          transition: opacity 0.5s ease 0.8s, transform 0.5s ease 0.8s;
+        }
+        .card-body .greeting { font-style: italic; font-weight: bold; margin-bottom: 6px; }
+        .card-body .message { font-size: 11.5px; color: #555; }
+        .card-body .signature { font-weight: bold; color: #b33939; margin-top: 10px; }
+
+        .envelope.open .envelope-lid {
+          transform: rotateX(180deg);
+          z-index: 1;
+          transition: transform 0.4s ease, z-index 0.1s ease 0s;
+        }
+        .envelope.open .heart {
+          transform: rotate(-45deg) scale(0.9);
+          transition: transform 0.4s ease;
+        }
+        .envelope.open .card-wrapper {
+          transform: translateY(-145px);
+          z-index: 3;
+        }
+        .envelope.open .card-cover {
+          opacity: 0;
+          pointer-events: none;
+        }
+        .envelope.open .card-body {
+          opacity: 1;
+          transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+      <div class="envelope">
+        <div class="envelope-lid">
+          <div class="heart"></div>
+        </div>
+        <div class="envelope-lid envelope-lid-secondary"></div>
+        
+        <div class="card-wrapper">
+          <div class="card">
+            <div class="card-border">
+              <div class="card-cover">
+                <div class="card-title">
+                  <span class="card-title-secondary">A little surprise</span>
+                  <span class="card-title-main">Just For You</span>
+                  <span class="card-title-secondary">Open me</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="greeting">Hey there,</p>
+                <p class="message">Today isn't a special holiday or a birthday, but you deserve a reminder of how amazing you are anyway. Thank you for bringing so much joy into my life just by being you. I hope this little note puts a smile on your face! ✨</p>
+                <p class="signature">Thinking of you always ❤️</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        const envelope = document.querySelector('.envelope');
+        envelope.addEventListener('click', () => {
+          envelope.classList.toggle('open');
+        });
+    </script>
+</body>
+</html>
